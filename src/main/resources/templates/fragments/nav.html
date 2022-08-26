@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<nav th:fragment="nav" class="navbar navbar-expand justify-content-md-end gap-4">
+
+    <th:block sec:authorize="hasAuthority('ADMIN')" th:switch="${valueSwitcherOverlay}">
+        <form th:action="@{/admin/switcher-overlay}" th:object="${link}" method="post">
+            <input id="inputAddress" type="text" th:field="*{address}" hidden>
+            <script th:inline="javascript">
+                let url = document.getElementById("inputAddress");
+                url.value = [[${#httpServletRequest.getRequestURI()}]];
+            </script>
+            <button th:case="true" type="submit" class="btn btn-outline-light">Скрыть</button>
+            <button th:case="false" type="submit" class="btn btn-outline-light">Показать</button>
+        </form>
+    </th:block>
+
+    <th:block sec:authorize="hasAuthority('ADMIN')" th:if="${#httpServletRequest.getRequestURI().startsWith('/admin/')}">
+        <a class="btn btn-outline-light" th:href="@{/}">Назад</a>
+    </th:block>
+    <a sec:authorize="hasAuthority('ADMIN')"
+    class="btn btn-outline-light" th:href="@{/admin}">Настройки</a>
+    <th:block sec:authorize="hasAuthority('USER')" th:switch="${#httpServletRequest.getRequestURI().equals('/')}">
+        <a th:case="true" class="btn btn-outline-light" th:href="@{/change-player}">Изменить</a>
+        <a th:case="false" class="btn btn-outline-light" th:href="@{/}">Назад</a>
+    </th:block>
+    <a sec:authorize="isAnonymous()"
+       class="btn btn-outline-light" th:href="@{/login}">Войти</a>
+    <a sec:authorize="isAuthenticated()"
+       class="btn btn-outline-light" th:href="@{/logout}">Выйти</a>
+
+
+</nav>
+</body>
+</html>

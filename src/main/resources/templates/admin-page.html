@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="fragments/nav :: nav"></div>
+<div class="container w-75">
+    <table style="text-align: center; margin: auto">
+        <thead>
+        <tr>
+            <td colspan="3">
+                <h2 th:text="${user.username}"></h2>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <img style="height:25vw; margin-right: 20px;"
+                     th:src="@{/image/character-big/{img} (img=${user.picture.addressOfBigPicture})}"
+                     th:alt="${user.picture.addressOfBigPicture}">
+            </td>
+            <td>
+                <div class="vstack gap-3">
+                    <div>
+                        <img style="height: 10vw"
+                             th:src="@{/image/rank/{img} (img=${user.addressRank})}"
+                             th:alt="${user.addressRank}">
+                    </div>
+                    <div>
+                        <img style="height: 3vw"
+                             th:src="@{/image/drops/{img} (img=${user.addressDrop})}"
+                             th:alt="${user.addressDrop}">
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+            <td colspan="3">
+                <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+                    <span>
+                    <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
+                    <input hidden type="text" th:field="*{id}">
+                    <input hidden id="inputRankMinus" type="text" th:field="*{rank}">
+                    <script th:inline="javascript">
+                        let rankMinus = document.getElementById("inputRankMinus");
+                        rankMinus.value = [[${user.rank}]] - 1;
+                    </script>
+                    <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
+                </form>
+                </span>
+                    <span th:text="'Ранг: ' + ${user.rank}">
+                    </span>
+                    <span>
+                    <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
+                    <input hidden type="text" th:field="*{id}">
+                    <input hidden id="inputRankPlus" type="text" th:field="*{rank}">
+                    <script th:inline="javascript">
+                        let rankPlus = document.getElementById("inputRankPlus");
+                        rankPlus.value = [[${user.rank}]] + 1;
+                    </script>
+                    <button type="submit" class="btn-danger btn-lg">Увеличить</button>
+                </form>
+                    </span>
+                </div>
+
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+                    <span>
+                        <form th:action="@{/change-player/update-drop}" th:object="${user}" method="post">
+                <input hidden type="text" th:field="*{id}">
+                <input hidden id="inputDropMinus" type="text" th:field="*{drop}">
+                <script th:inline="javascript">
+                    let dropMinus = document.getElementById("inputDropMinus");
+                    dropMinus.value = [[${user.drop}]] - 1;
+                </script>
+                <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
+            </form>
+                    </span>
+                    <span th:text="'Капли: ' + ${user.drop}">
+                    </span>
+                    <span>
+                        <form th:action="@{/change-player/update-drop}" th:object="${user}" method="post">
+                            <input hidden type="text" th:field="*{id}">
+                            <input hidden id="inputDropPlus" type="text" th:field="*{drop}">
+                            <script th:inline="javascript">
+                                let dropPlus = document.getElementById("inputDropPlus");
+                                dropPlus.value = [[${user.drop}]] + 1;
+                            </script>
+                            <button type="submit" class="btn-danger btn-lg">Увеличить</button>
+                        </form>
+                    </span>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${error!=null}">
+            <th colspan="3" class="alert alert-danger" role="alert" th:text="${error}"></th>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+</body>
+</html>
