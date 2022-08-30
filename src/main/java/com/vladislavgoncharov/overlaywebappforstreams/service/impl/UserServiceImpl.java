@@ -112,34 +112,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserDTO userDTO) throws ValidationException {
+        if (userDTO.getRole().equals(Role.ADMIN)) {
+            User user = userRepository.getById(userDTO.getId());
+            if (!userDTO.getPassword().isBlank())
+                user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
 
-        if (checkUsername(userDTO.getUsername(), userDTO.getId()))
-            throw new ValidationException("Игрок с именем " + userDTO.getUsername() + " уже существует");
+            user.setUsername(userDTO.getUsername());
+            userRepository.save(user);
+        } else {
 
-        if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchingPassword()))
-            throw new ValidationException("Пароли не совпадают");
+            if (checkUsername(userDTO.getUsername(), userDTO.getId()))
+                throw new ValidationException("Игрок с именем " + userDTO.getUsername() + " уже существует");
 
-        User user = userRepository.getById(userDTO.getId());
+            if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchingPassword()))
+                throw new ValidationException("Пароли не совпадают");
 
-        if (userDTO.isDead() && Objects.equals(userDTO.getPictureId(), user.getPicture().getId()))
-            throw new ValidationException("Вы не выбрали нового игрока");
-        if (userDTO.isDead())
-            pictureService.updateIsDeadCharacterValueTrue(user.getPicture().getId());
+            User user = userRepository.getById(userDTO.getId());
 
-
-        if (!userDTO.getPassword().isBlank())
-            user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
-        if (user.getPicture() != null && !user.getPicture().getId().equals(userDTO.getPictureId()))
-            user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
-        else if (user.getPicture() == null)
-            user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
+            if (userDTO.isDead() && Objects.equals(userDTO.getPictureId(), user.getPicture().getId()))
+                throw new ValidationException("Вы не выбрали нового игрока");
+            if (userDTO.isDead())
+                pictureService.updateIsDeadCharacterValueTrue(user.getPicture().getId());
 
 
-        user.setUsername(userDTO.getUsername());
-        userRepository.save(user);
+            if (!userDTO.getPassword().isBlank())
+                user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
+            if (user.getPicture() != null && !user.getPicture().getId().equals(userDTO.getPictureId()))
+                user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
+            else if (user.getPicture() == null)
+                user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
 
-        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
 
+            user.setUsername(userDTO.getUsername());
+            userRepository.save(user);
+
+            ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
+        }
     }
 
     public boolean checkUsername(String username, Long id) {

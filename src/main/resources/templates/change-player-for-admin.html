@@ -7,59 +7,66 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <style th:inline="css">
-        @import url([(${font.fontAddress})]);
+        @import url([(
+
+        ${font.fontAddress}
+        )
+        ]
+        )
+        ;
         :root {
-            --bs-font-sans-serif: [(${font.fontName})];
+            --bs-font-sans-serif: [(${font.fontName}) ];
         }
     </style>
     <title>Title</title>
 </head>
 <body>
 <div class="navHidden" th:insert="fragments/nav :: nav"></div>
-<div class="container">
-    <div class="row row-cols-2">
+<th:block th:switch="${player.role.name()}">
+    <div th:case="USER" class="container">
+        <div class="row row-cols-2">
 
-        <table style="text-align: center; margin: auto">
-            <thead>
-            <tr>
-                <td colspan="3">
-                    <h2 th:text="${player.username}"></h2>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" th:switch="${player.picture == null}">
-                    <img th:case="true" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
-                         th:src="@{/image/no-image/img.png}">
-                    <img th:case="false" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
-                         th:src="@{{img} (img=${player.picture.addressOfBigPicture})}"
-                         th:alt="${player.picture.addressOfBigPicture}">
-                </td>
-                <td>
-                    <div class="vstack gap-3">
-                        <div th:switch="${player.addressRank == null}">
-                            <img th:case="true" style="height: 10vw"
-                                 th:src="@{/image/no-image/img.png}">
-                            <img th:case="false" style="height: 10vw"
-                                 th:src="@{{img} (img=${player.addressRank})}"
-                                 th:alt="${player.addressRank}">
+            <table style="text-align: center; margin: auto">
+                <thead>
+                <tr>
+                    <td colspan="3">
+                        <h2 th:text="${player.username}"></h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" th:switch="${player.picture == null}">
+                        <img th:case="true" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
+                             th:src="@{/image/no-image/img.png}">
+                        <img th:case="false" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
+                             th:src="@{{img} (img=${player.picture.addressOfBigPicture})}"
+                             th:alt="${player.picture.addressOfBigPicture}">
+                    </td>
+                    <td>
+                        <div class="vstack gap-3">
+                            <div th:switch="${player.addressRank == null}">
+                                <img th:case="true" style="height: 10vw"
+                                     th:src="@{/image/no-image/img.png}">
+                                <img th:case="false" style="height: 10vw"
+                                     th:src="@{{img} (img=${player.addressRank})}"
+                                     th:alt="${player.addressRank}">
+                            </div>
+                            <div th:switch="${player.addressDrop == null}">
+                                <img th:case="true" style="height: 3vw"
+                                     th:src="@{/image/no-image/img.png}">
+                                <img th:case="false" style="height: 3vw"
+                                     th:src="@{{img} (img=${player.addressDrop})}"
+                                     th:alt="${player.addressDrop}">
+                            </div>
                         </div>
-                        <div th:switch="${player.addressDrop == null}">
-                            <img th:case="true" style="height: 3vw"
-                                 th:src="@{/image/no-image/img.png}">
-                            <img th:case="false" style="height: 3vw"
-                                 th:src="@{{img} (img=${player.addressDrop})}"
-                                 th:alt="${player.addressDrop}">
-                        </div>
-                    </div>
 
-                </td>
-            </tr>
-            </thead>
-            <tbody>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
 
-            <tr>
-                <td colspan="3">
-                    <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+                <tr>
+                    <td colspan="3">
+                        <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
                         <span>
                      <form th:action="@{/admin/{username}/update-rank (username = ${player.username})}"
                            th:object="${player}" method="post">
@@ -73,9 +80,9 @@
                 </form>
                     </span>
 
-                        <span th:text="'Ранг: ' + ${player.rank}">
+                            <span th:text="'Ранг: ' + ${player.rank}">
                     </span>
-                        <span>
+                            <span>
                     <form th:action="@{/admin/{username}/update-rank (username = ${player.username})}"
                           th:object="${player}" method="post">
                     <input hidden type="text" th:field="*{id}">
@@ -88,13 +95,13 @@
                 </form>
                 </span>
 
-                    </div>
+                        </div>
 
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
                     <span>
                         <form th:action="@{/admin/{username}/update-drop (username = ${player.username})}"
                               th:object="${player}" method="post">
@@ -107,9 +114,9 @@
                             <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
                          </form>
                     </span>
-                        <span th:text="'Капли: ' + ${player.drop}">
+                            <span th:text="'Капли: ' + ${player.drop}">
                     </span>
-                        <span>
+                            <span>
                          <form th:action="@{/admin/{username}/update-drop (username = ${player.username})}"
                                th:object="${player}" method="post">
                             <input hidden type="text" th:field="*{id}">
@@ -121,114 +128,189 @@
                             <button type="submit" class="btn-danger btn-lg">Увеличить</button>
                         </form>
                     </span>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
 
-        </table>
-        <table>
+            </table>
+            <table>
+                <tr>
+                    <td>
+                        <form style="padding: 30px;"
+                              th:action="@{/admin/{username}/update-user (username = ${player.username})}"
+                              th:object="${player}" method="post">
+                            <input type="text" th:field="*{id}" hidden>
+                            <input type="text" th:field="*{role}" hidden>
+                            <input type="submit" id="save" hidden>
+                            <table style="text-align: center; margin: auto">
+                                <thead>
+                                <tr>
+                                    <td colspan="2">
+                                        <h2>Данные игрока</h2>
+                                    </td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <label class="fs-5" for="input_username">
+                                            Никнейм:
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" id="input_username"
+                                               th:field="*{username}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="fs-5" for="input_password">
+                                            Новый пароль:
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" id="input_password"
+                                               th:field="*{password}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="fs-5" for="input_matching_password">
+                                            Подтвердите пароль:
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" id="input_matching_password"
+                                               th:field="*{matchingPassword}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fs-5">
+                                        Персонаж выбыл из игры?
+                                    </td>
+                                    <td style="padding: 5px">
+                                        <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_yes"
+                                               value="true" th:field="*{dead}">
+                                        <label class="btn btn-outline-danger btn-sm"
+                                               for="checkbox_is_died_yes">Да</label>
+
+                                        <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_no"
+                                               value="false" th:field="*{dead}">
+                                        <label class="btn btn-outline-danger btn-sm"
+                                               for="checkbox_is_died_no">Нет</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fs-5" colspan="2">
+                                        Изменить персонажа
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="row row-cols-auto justify-content-around " style="margin: auto">
+                                            <div class="col" style="padding: 0"
+                                                 th:each="pic: ${allUnoccupiedCharacters}">
+                                                <div class="card backgroundTransparent" style="border: transparent">
+                                                    <input class="btn-check" type="radio"
+                                                           th:id="${pic.addressOfSmallPicture}" th:value="${pic.id}"
+                                                           th:field="*{pictureId}"
+                                                           th:checked="${player.pictureId.equals(pic.id)}">
+                                                    <label class="btn-outline-danger"
+                                                           th:for="${pic.addressOfSmallPicture}">
+                                                        <img class="card-img" style="width: 4vw"
+                                                             th:src="@{{img} (img=${pic.addressOfSmallPicture})}"
+                                                             alt="persName" src="#">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <label class="btn-danger btn-lg" for="save">
+                            <p style="width:15px;word-wrap: break-word;white-space:pre-wrap;">
+                                Сохранить
+                            </p>
+                        </label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div th:if="${error!=null}" class="alert alert-danger text-center" role="alert" style="margin: 5px 70px;"
+             th:text="${error}"></div>
+    </div>
+    <div th:case="ADMIN" class="container">
+        <table class="table" style="margin: auto;text-align: center;vertical-align: middle">
             <tr>
                 <td>
-                    <form style="padding: 30px;"
-                          th:action="@{/admin/{username}/update-user (username = ${player.username})}"
+                    <form th:action="@{/admin/{username}/update-user (username = ${player.username})}"
                           th:object="${player}" method="post">
                         <input type="text" th:field="*{id}" hidden>
-                        <input type="submit" id="save" hidden>
+                        <input type="text" th:field="*{role}" hidden>
                         <table style="text-align: center; margin: auto">
                             <thead>
+                            <tr th:if="${error!=null}" class="alert alert-danger text-center">
+                                <td th:text="${error}" colspan="2">
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="2">
-                                    <h2>Данные игрока</h2>
+                                    <h2>Данные админа</h2>
                                 </td>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td>
-                                    <label class="fs-5" for="input_username">
-                                        Никнейм:
+                                    <label class="fs-5" for="input_username_admin">
+                                        Логин:
                                     </label>
                                 </td>
                                 <td>
-                                    <input class="form-control" type="text" id="input_username" th:field="*{username}">
+                                    <input class="form-control" type="text" id="input_username_admin"
+                                           th:field="*{username}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="fs-5" for="input_password">
+                                    <label class="fs-5" for="input_password_admin">
                                         Новый пароль:
                                     </label>
                                 </td>
                                 <td>
-                                    <input class="form-control" type="text" id="input_password" th:field="*{password}">
+                                    <input class="form-control" type="text" id="input_password_admin"
+                                           th:field="*{password}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="fs-5" for="input_matching_password">
+                                    <label class="fs-5" for="input_matching_password_admin">
                                         Подтвердите пароль:
                                     </label>
                                 </td>
                                 <td>
-                                    <input class="form-control" type="text" id="input_matching_password"
+                                    <input class="form-control" type="text" id="input_matching_password_admin"
                                            th:field="*{matchingPassword}">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="fs-5">
-                                    Персонаж выбыл из игры?
-                                </td>
-                                <td style="padding: 5px">
-                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_yes"
-                                           value="true" th:field="*{dead}">
-                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_yes">Да</label>
-
-                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_no"
-                                           value="false" th:field="*{dead}">
-                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_no">Нет</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="fs-5" colspan="2">
-                                    Изменить персонажа
-                                </td>
-                            </tr>
-                            <tr>
                                 <td colspan="2">
-                                    <div class="row row-cols-auto justify-content-around " style="margin: auto">
-                                        <div class="col" style="padding: 0"
-                                             th:each="pic: ${allUnoccupiedCharacters}">
-                                            <div class="card backgroundTransparent" style="border: transparent">
-                                                <input class="btn-check" type="radio"
-                                                       th:id="${pic.addressOfSmallPicture}" th:value="${pic.id}"
-                                                       th:field="*{pictureId}" th:checked="${player.pictureId.equals(pic.id)}">
-                                                <label class="btn-outline-danger" th:for="${pic.addressOfSmallPicture}">
-                                                    <img class="card-img" style="width: 4vw"
-                                                         th:src="@{{img} (img=${pic.addressOfSmallPicture})}"
-                                                         alt="persName" src="#">
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <button type="submit" class="btn-danger btn">Сохранить</button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </form>
                 </td>
-                <td>
-                    <label class="btn-danger btn-lg" for="save">
-                        <p style="width:15px;word-wrap: break-word;white-space:pre-wrap;">
-                            Сохранить
-                        </p>
-                    </label>
-                </td>
             </tr>
         </table>
     </div>
-    <div th:if="${error!=null}" class="alert alert-danger text-center" role="alert" style="margin: 5px 70px;"
-         th:text="${error}"></div>
-</div>
+
+</th:block>
 </body>
 </html>
