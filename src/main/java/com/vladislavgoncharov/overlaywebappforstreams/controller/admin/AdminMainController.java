@@ -1,16 +1,13 @@
 package com.vladislavgoncharov.overlaywebappforstreams.controller.admin;
 
 import com.vladislavgoncharov.overlaywebappforstreams.dto.UserDTO;
+import com.vladislavgoncharov.overlaywebappforstreams.service.FontService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.PictureService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.ShowOverlayService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.UserService;
-import com.vladislavgoncharov.overlaywebappforstreams.util.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.ValidationException;
 
@@ -18,28 +15,22 @@ import javax.xml.bind.ValidationException;
 @RequestMapping("/admin")
 public class AdminMainController {
 
-    private final ShowOverlayService showOverlayService;
+    private final FontService fontService;
     private final UserService userService;
     private final PictureService pictureService;
 
-    public AdminMainController(ShowOverlayService showOverlayService, UserService userService, PictureService pictureService) {
-        this.showOverlayService = showOverlayService;
+    public AdminMainController(FontService fontService, UserService userService, PictureService pictureService) {
+        this.fontService = fontService;
         this.userService = userService;
         this.pictureService = pictureService;
     }
 
     private void addModel(Model model,String username,String error){
-        model.addAttribute("link", new Link());
+        model.addAttribute("font", fontService.getFont());
         model.addAttribute("player",userService.findUserByUsername(username));
         model.addAttribute("allCharacterPicture", pictureService.findAllCharacterPicture());
         model.addAttribute("allUnoccupiedCharacters", pictureService.findAllUnoccupiedCharacters(username));
         model.addAttribute("error", error);
-    }
-
-    @PostMapping("/switcher-overlay")
-    public String switcherShowOverlay(@ModelAttribute Link link) {
-        showOverlayService.overlaySwitch();
-        return "redirect:" + link.getAddress();
     }
 
     @RequestMapping("/{username}")
@@ -50,16 +41,14 @@ public class AdminMainController {
 
     @PostMapping("/{username}/update-rank")
     public String updateRank(@ModelAttribute UserDTO userDTO, Model model) {
-        System.out.println(1);
         try {
             userService.updateRank(userDTO);
         } catch (ValidationException e) {
             addModel(model,userDTO.getUsername(),e.getMessage());
             return "change-player-for-admin";
         }
-        System.out.println(2);
 
-        return "redirect:/admin/" + userDTO.getUsername();
+        return "forward:/admin/" + userDTO.getUsername();
     }
 
 
@@ -71,7 +60,7 @@ public class AdminMainController {
             addModel(model,userDTO.getUsername(),e.getMessage());
             return "change-player-for-admin";
         }
-        return "redirect:/admin/" + userDTO.getUsername();
+        return "forward:/admin/" + userDTO.getUsername();
     }
 
     @PostMapping("/{username}/update-user")
@@ -82,6 +71,7 @@ public class AdminMainController {
             addModel(model,userDTO.getUsername(),e.getMessage());
             return "change-player-for-admin";
         }
-        return "redirect:/admin/" + userDTO.getUsername();
+
+        return "forward:/admin/" + userDTO.getUsername();
     }
 }

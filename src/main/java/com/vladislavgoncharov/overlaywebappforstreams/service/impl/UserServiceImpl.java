@@ -10,6 +10,7 @@ import com.vladislavgoncharov.overlaywebappforstreams.repository.CharacterPictur
 import com.vladislavgoncharov.overlaywebappforstreams.repository.PictureOfDropRepository;
 import com.vladislavgoncharov.overlaywebappforstreams.repository.PictureOfRankRepository;
 import com.vladislavgoncharov.overlaywebappforstreams.repository.UserRepository;
+import com.vladislavgoncharov.overlaywebappforstreams.service.PictureService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.UserService;
 import com.vladislavgoncharov.overlaywebappforstreams.util.ReloadPageAfterUpdateDB;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,12 +36,14 @@ public class UserServiceImpl implements UserService {
     private final PictureOfDropRepository dropRepository;
     private final PictureOfRankRepository rankRepository;
     private final CharacterPictureRepository characterPictureRepository;
+    private final PictureService pictureService;
 
-    public UserServiceImpl(UserRepository userRepository, PictureOfDropRepository pictureOfDropRepository, PictureOfRankRepository pictureOfRankRepository, CharacterPictureRepository characterPictureRepository) {
+    public UserServiceImpl(UserRepository userRepository, PictureOfDropRepository pictureOfDropRepository, PictureOfRankRepository pictureOfRankRepository, CharacterPictureRepository characterPictureRepository, PictureService pictureService) {
         this.userRepository = userRepository;
         this.dropRepository = pictureOfDropRepository;
         this.rankRepository = pictureOfRankRepository;
         this.characterPictureRepository = characterPictureRepository;
+        this.pictureService = pictureService;
     }
 
     @Override
@@ -62,8 +65,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        userRepository.findAll().forEach(System.out::println);
+        return MAPPER.fromUserList(userRepository.findAll());
     }
 
     @Override
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateRank(UserDTO userDTO) throws ValidationException {
-        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
+
 
         PictureOfRank rank = rankRepository.getByNumbersOfRank(userDTO.getRank());
         if (rank == null)
@@ -87,11 +91,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.getById(userDTO.getId());
         user.setRank(rank);
         userRepository.save(user);
+
+        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
     }
 
     @Override
     public void updateDrop(UserDTO userDTO) throws ValidationException {
-        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
+
 
         PictureOfDrop drop = dropRepository.getByNumbersOfDrop(userDTO.getDrop());
         if (drop == null)
@@ -100,28 +106,40 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.getById(userDTO.getId());
         user.setDrop(drop);
         userRepository.save(user);
+
+        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
     }
 
     @Override
-    public void updateUser(UserDTO userDTO) throws ValidationException{
-        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
-
+    public void updateUser(UserDTO userDTO) throws ValidationException {
 
         if (checkUsername(userDTO.getUsername(), userDTO.getId()))
             throw new ValidationException("Игрок с именем " + userDTO.getUsername() + " уже существует");
 
-        if (!Objects.equals(userDTO.getPassword(),userDTO.getMatchingPassword()))
+        if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchingPassword()))
             throw new ValidationException("Пароли не совпадают");
 
         User user = userRepository.getById(userDTO.getId());
-        user.setUsername(userDTO.getUsername());
+
+        if (userDTO.isDead() && Objects.equals(userDTO.getPictureId(), user.getPicture().getId()))
+            throw new ValidationException("Вы не выбрали нового игрока");
+        if (userDTO.isDead())
+            pictureService.updateIsDeadCharacterValueTrue(user.getPicture().getId());
+
 
         if (!userDTO.getPassword().isBlank())
             user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
-        if (!user.getPicture().getId().equals(userDTO.getPictureId()))
+        if (user.getPicture() != null && !user.getPicture().getId().equals(userDTO.getPictureId()))
+            user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
+        else if (user.getPicture() == null)
             user.setPicture(characterPictureRepository.getById(userDTO.getPictureId()));
 
+
+        user.setUsername(userDTO.getUsername());
         userRepository.save(user);
+
+        ReloadPageAfterUpdateDB.valueIsUpdateDBTrue();
+
     }
 
     public boolean checkUsername(String username, Long id) {

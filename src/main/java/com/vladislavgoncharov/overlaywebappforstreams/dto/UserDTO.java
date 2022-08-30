@@ -29,11 +29,14 @@ public class UserDTO {
     private String addressDrop;
     private Long pictureId;
     private CharacterPicture picture;
+    private boolean isDead;
 
     public static String getUsername(CharacterPicture picture, List<UserDTO> listUsers){
-        for (UserDTO user : listUsers)
+        for (UserDTO user : listUsers) {
+            if (user.getPicture() == null) return "";
             if (user.getPicture().equals(picture))
                 return user.getUsername();
+        }
         return "";
     }
 

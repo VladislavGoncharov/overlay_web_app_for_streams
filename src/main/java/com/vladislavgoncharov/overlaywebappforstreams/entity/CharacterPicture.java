@@ -23,5 +23,6 @@ public class CharacterPicture {
 
     private String addressOfSmallPicture;
     private String addressOfBigPicture;
+    private boolean isDied;
 
 }

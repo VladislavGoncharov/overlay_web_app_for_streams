@@ -1,0 +1,12 @@
+.navHidden {
+    opacity: 0;
+    transition-duration: 0.5s;
+}
+
+.navHidden:hover {
+    opacity: 1;
+}
+
+html, body, .backgroundTransparent{
+    background: transparent;
+}

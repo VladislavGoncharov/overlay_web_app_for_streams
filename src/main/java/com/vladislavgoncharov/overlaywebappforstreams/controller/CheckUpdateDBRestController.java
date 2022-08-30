@@ -1,5 +1,6 @@
 package com.vladislavgoncharov.overlaywebappforstreams.controller;
 
+import com.vladislavgoncharov.overlaywebappforstreams.service.FontService;
 import com.vladislavgoncharov.overlaywebappforstreams.util.ReloadPageAfterUpdateDB;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,8 @@ public class CheckUpdateDBRestController {
 
     @PostMapping("/value_update_db_false")
     public void valueUpdateDBFalse() {
-        ReloadPageAfterUpdateDB.valueIsUpdateDBFalse();
+        Thread thread = new Thread(new ReloadPageAfterUpdateDB());
+        thread.start();
     }
 
 }

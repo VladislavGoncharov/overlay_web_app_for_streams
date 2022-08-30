@@ -14,19 +14,28 @@ public interface UserMapper {
     UserMapper MAPPER = Mappers.getMapper(UserMapper.class);
 
     default UserDTO fromUser(User user) {
-        return UserDTO.builder()
+        UserDTO userDTO = UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .password("")
                 .matchingPassword("")
                 .role(user.getRole())
-                .drop(user.getDrop().getNumbersOfDrop())
-                .addressDrop(user.getDrop().getAddressPicture())
-                .rank(user.getRank().getNumbersOfRank())
-                .addressRank(user.getRank().getAddressPicture())
-                .picture(user.getPicture())
-                .pictureId(user.getPicture().getId())
+                .isDead(false)
                 .build();
+
+        if (user.getDrop() !=null){
+            userDTO.setDrop(user.getDrop().getNumbersOfDrop());
+            userDTO.setAddressDrop(user.getDrop().getAddressPicture());
+        }
+        if (user.getRank() !=null){
+            userDTO.setRank(user.getRank().getNumbersOfRank());
+            userDTO.setAddressRank(user.getRank().getAddressPicture());
+        }
+        if (user.getPicture() !=null){
+            userDTO.setPicture(user.getPicture());
+            userDTO.setPictureId(user.getPicture().getId());
+        }
+        return userDTO;
     }
 
     default List<UserDTO> fromUserList(List<User> users) {

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style th:inline="css">
+        @import url([(${font.fontAddress})]);
+        :root {
+            --bs-font-sans-serif: [(${font.fontName})];
+        }
+    </style>
+    <title>Title</title>
+</head>
+<body>
+<div class="navHidden" th:insert="fragments/nav :: nav"></div>
+<div class="container w-75">
+    <form action="#" th:action="@{/admin/settings/font/upload}" th:object="${newFont}" method="post">
+    <table class="table" style="text-align: center; margin: auto;vertical-align: middle">
+        <thead>
+        <tr>
+            <td class="fs-4" colspan="3">
+                <p>Это просто пример текста</p>
+                <p>This is just an example of the text</p>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="fs-5">
+                <label for="input_link" > Ссылка шрифта
+                </label>
+            </td>
+            <td colspan="2">
+                <input class="form-control" type="text" id="input_link" th:field="*{fontAddress}">
+            </td>
+        </tr>
+        <tr>
+            <td class="fs-5">
+                <label for="input_name" > Имя шрифта
+                </label>
+            </td>
+            <td colspan="2">
+                <input class="form-control" type="text" id="input_name" th:field="*{fontName}">
+            </td>
+        </tr>
+        <tr>
+            <td class="fs-5" colspan="3">
+                <button type="submit" class="btn-danger btn-sm">Загрузить</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="fs-5" >
+                Напоминание:
+            </td>
+            <td class="fs-5">
+                <img style="height:20vw" th:src="@{/image/info/info_font.png}">
+            </td>
+            <td class="fs-5">
+                <a class="btn btn-outline-danger" href="https://fonts.google.com/">Гугл шрифты</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+</div>
+</body>
+</html>

@@ -32,5 +32,4 @@ public class User {
     @OneToOne
     private CharacterPicture picture;
 
-
 }

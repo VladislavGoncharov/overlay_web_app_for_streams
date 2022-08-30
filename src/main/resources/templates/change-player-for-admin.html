@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
-
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style th:inline="css">
+        @import url([(${font.fontAddress})]);
+        :root {
+            --bs-font-sans-serif: [(${font.fontName})];
+        }
+    </style>
     <title>Title</title>
 </head>
 <body>
-<div th:insert="fragments/nav :: nav"></div>
-<div class="container w-75">
+<div class="navHidden" th:insert="fragments/nav :: nav"></div>
+<div class="container">
     <div class="row row-cols-2">
 
         <table style="text-align: center; margin: auto">
@@ -19,21 +27,27 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <img style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
-                         th:src="@{/image/character-big/{img} (img=${player.picture.addressOfBigPicture})}"
+                <td colspan="2" th:switch="${player.picture == null}">
+                    <img th:case="true" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
+                         th:src="@{/image/no-image/img.png}">
+                    <img th:case="false" style="max-width:25vw;max-height: 25vw; margin-right: 20px;"
+                         th:src="@{{img} (img=${player.picture.addressOfBigPicture})}"
                          th:alt="${player.picture.addressOfBigPicture}">
                 </td>
                 <td>
                     <div class="vstack gap-3">
-                        <div>
-                            <img style="height: 10vw"
-                                 th:src="@{/image/rank/{img} (img=${player.addressRank})}"
+                        <div th:switch="${player.addressRank == null}">
+                            <img th:case="true" style="height: 10vw"
+                                 th:src="@{/image/no-image/img.png}">
+                            <img th:case="false" style="height: 10vw"
+                                 th:src="@{{img} (img=${player.addressRank})}"
                                  th:alt="${player.addressRank}">
                         </div>
-                        <div>
-                            <img style="height: 3vw"
-                                 th:src="@{/image/drops/{img} (img=${player.addressDrop})}"
+                        <div th:switch="${player.addressDrop == null}">
+                            <img th:case="true" style="height: 3vw"
+                                 th:src="@{/image/no-image/img.png}">
+                            <img th:case="false" style="height: 3vw"
+                                 th:src="@{{img} (img=${player.addressDrop})}"
                                  th:alt="${player.addressDrop}">
                         </div>
                     </div>
@@ -162,7 +176,21 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td class="fs-5">
+                                    Персонаж выбыл из игры?
+                                </td>
+                                <td style="padding: 5px">
+                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_yes"
+                                           value="true" th:field="*{dead}">
+                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_yes">Да</label>
+
+                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_no"
+                                           value="false" th:field="*{dead}">
+                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_no">Нет</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fs-5" colspan="2">
                                     Изменить персонажа
                                 </td>
                             </tr>
@@ -171,13 +199,13 @@
                                     <div class="row row-cols-auto justify-content-around " style="margin: auto">
                                         <div class="col" style="padding: 0"
                                              th:each="pic: ${allUnoccupiedCharacters}">
-                                            <div class="card" style="border: transparent">
+                                            <div class="card backgroundTransparent" style="border: transparent">
                                                 <input class="btn-check" type="radio"
                                                        th:id="${pic.addressOfSmallPicture}" th:value="${pic.id}"
-                                                       th:field="*{pictureId}">
+                                                       th:field="*{pictureId}" th:checked="${player.pictureId.equals(pic.id)}">
                                                 <label class="btn-outline-danger" th:for="${pic.addressOfSmallPicture}">
                                                     <img class="card-img" style="width: 4vw"
-                                                         th:src="@{/image/character-small/{img} (img=${pic.addressOfSmallPicture})}"
+                                                         th:src="@{{img} (img=${pic.addressOfSmallPicture})}"
                                                          alt="persName" src="#">
                                                 </label>
                                             </div>
@@ -189,11 +217,11 @@
                         </table>
                     </form>
                 </td>
-                <td >
-                    <label class="btn-danger btn-lg" for="save" >
-                       <p style="width:15px;word-wrap: break-word;white-space:pre-wrap;">
-                           Сохранить
-                       </p>
+                <td>
+                    <label class="btn-danger btn-lg" for="save">
+                        <p style="width:15px;word-wrap: break-word;white-space:pre-wrap;">
+                            Сохранить
+                        </p>
                     </label>
                 </td>
             </tr>

@@ -1,7 +1,9 @@
 package com.vladislavgoncharov.overlaywebappforstreams.controller;
 
+import com.vladislavgoncharov.overlaywebappforstreams.configuration.GifStorageCloudinary;
 import com.vladislavgoncharov.overlaywebappforstreams.dto.UserDTO;
 import com.vladislavgoncharov.overlaywebappforstreams.entity.Role;
+import com.vladislavgoncharov.overlaywebappforstreams.service.FontService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.PictureService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.ShowOverlayService;
 import com.vladislavgoncharov.overlaywebappforstreams.service.UserService;
@@ -18,11 +20,13 @@ import java.security.Principal;
 @Controller
 public class MainController {
 
+    private final FontService fontService;
     private final ShowOverlayService showOverlayService;
     private final UserService userService;
     private final PictureService pictureService;
 
-    public MainController(ShowOverlayService showOverlayService, UserService userService, PictureService pictureService) {
+    public MainController(FontService fontService, ShowOverlayService showOverlayService, UserService userService, PictureService pictureService) {
+        this.fontService = fontService;
         this.showOverlayService = showOverlayService;
         this.userService = userService;
         this.pictureService = pictureService;
@@ -31,8 +35,9 @@ public class MainController {
 
     @RequestMapping("/")
     public String firstView(Model model) {
-
-        model.addAttribute("link", new Link());
+        System.out.println(fontService.getFont().getFontName());
+        model.addAttribute("font", fontService.getFont());
+        model.addAttribute("gif", GifStorageCloudinary.getGifURL());
         model.addAttribute("valueSwitcherOverlay", showOverlayService.getValueSwitcher());
         model.addAttribute("listUsers", userService.findAllByRole(Role.USER));
         model.addAttribute("listPicture", pictureService.findAllCharacterPicture());
@@ -43,7 +48,9 @@ public class MainController {
 
     @RequestMapping("/change-player")
     public String changePlayer(Model model, Principal principal) {
+        model.addAttribute("font", fontService.getFont());
         model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+        model.addAttribute("allUnoccupiedCharacters", pictureService.findAllUnoccupiedCharacters(principal.getName()));
 
         return "change-player";
     }
@@ -54,7 +61,9 @@ public class MainController {
         try {
             userService.updateRank(userDTO);
         } catch (ValidationException e) {
+            model.addAttribute("font", fontService.getFont());
             model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+            model.addAttribute("allUnoccupiedCharacters", pictureService.findAllUnoccupiedCharacters(principal.getName()));
             model.addAttribute("error", e.getMessage());
             return "change-player";
         }
@@ -67,7 +76,23 @@ public class MainController {
         try {
             userService.updateDrop(userDTO);
         } catch (ValidationException e) {
+            model.addAttribute("font", fontService.getFont());
             model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+            model.addAttribute("allUnoccupiedCharacters", pictureService.findAllUnoccupiedCharacters(principal.getName()));
+            model.addAttribute("error", e.getMessage());
+            return "change-player";
+        }
+        return "redirect:/change-player";
+    }
+
+    @PostMapping("/change-player/update-character")
+    public String updateCharacter(@ModelAttribute UserDTO userDTO, Model model, Principal principal) {
+        try {
+            userService.updateUser(userDTO);
+        } catch (ValidationException e) {
+            model.addAttribute("font", fontService.getFont());
+            model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+            model.addAttribute("allUnoccupiedCharacters", pictureService.findAllUnoccupiedCharacters(principal.getName()));
             model.addAttribute("error", e.getMessage());
             return "change-player";
         }

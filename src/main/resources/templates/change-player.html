@@ -1,64 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
-
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style th:inline="css">
+        @import url([(${font.fontAddress})]);
+        :root {
+            --bs-font-sans-serif: [(${font.fontName})];
+        }
+    </style>
     <title>Title</title>
 </head>
 <body>
-<div th:insert="fragments/nav :: nav"></div>
-<div class="container w-75">
-    <table style="text-align: center; margin: auto">
-        <thead>
-        <tr>
-            <td colspan="3">
-                <h2 th:text="${user.username}"></h2>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <img style="height:25vw; margin-right: 20px;"
-                     th:src="@{/image/character-big/{img} (img=${user.picture.addressOfBigPicture})}"
-                     th:alt="${user.picture.addressOfBigPicture}">
-            </td>
-            <td>
-                <div class="vstack gap-3">
-                    <div>
-                        <img style="height: 10vw"
-                             th:src="@{/image/rank/{img} (img=${user.addressRank})}"
-                             th:alt="${user.addressRank}">
+<div class="navHidden" th:insert="fragments/nav :: nav"></div>
+<div class="container">
+    <div class="row row-cols-2">
+        <table style="text-align: center; margin: auto">
+            <thead>
+            <tr>
+                <td colspan="3">
+                    <h2 th:text="${user.username}"></h2>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <img style="height:25vw; margin-right: 20px;"
+                         th:src="@{{img} (img=${user.picture.addressOfBigPicture})}"
+                         th:alt="${user.picture.addressOfBigPicture}">
+                </td>
+                <td>
+                    <div class="vstack gap-3">
+                        <div>
+                            <img style="height: 10vw"
+                                 th:src="@{{img} (img=${user.addressRank})}"
+                                 th:alt="${user.addressRank}">
+                        </div>
+                        <div>
+                            <img style="height: 3vw"
+                                 th:src="@{{img} (img=${user.addressDrop})}"
+                                 th:alt="${user.addressDrop}">
+                        </div>
                     </div>
-                    <div>
-                        <img style="height: 3vw"
-                             th:src="@{/image/drops/{img} (img=${user.addressDrop})}"
-                             th:alt="${user.addressDrop}">
-                    </div>
-                </div>
 
-            </td>
-        </tr>
-        </thead>
-        <tbody>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
 
-        <tr>
-            <td colspan="3">
-                <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+            <tr>
+                <td colspan="3">
+                    <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
                     <span>
-                    <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
-                    <input hidden type="text" th:field="*{id}">
-                    <input hidden id="inputRankMinus" type="text" th:field="*{rank}">
-                    <script th:inline="javascript">
-                        let rankMinus = document.getElementById("inputRankMinus");
-                        rankMinus.value = [[${user.rank}]] - 1;
-                    </script>
-                    <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
-                </form>
-                </span>
-                    <span th:text="'Ранг: ' + ${user.rank}">
-                    </span>
-                    <span>
-                    <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
+                        <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
                     <input hidden type="text" th:field="*{id}">
                     <input hidden id="inputRankPlus" type="text" th:field="*{rank}">
                     <script th:inline="javascript">
@@ -67,14 +63,27 @@
                     </script>
                     <button type="submit" class="btn-danger btn-lg">Увеличить</button>
                 </form>
+                </span>
+                        <span th:text="'Ранг: ' + ${user.rank}">
                     </span>
-                </div>
+                        <span>
+                            <form th:action="@{/change-player/update-rank}" th:object="${user}" method="post">
+                    <input hidden type="text" th:field="*{id}">
+                    <input hidden id="inputRankMinus" type="text" th:field="*{rank}">
+                    <script th:inline="javascript">
+                        let rankMinus = document.getElementById("inputRankMinus");
+                        rankMinus.value = [[${user.rank}]] - 1;
+                    </script>
+                    <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
+                </form>
+                    </span>
+                    </div>
 
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="row row-cols-3 justify-content-around fs-3 align-items-center">
                     <span>
                         <form th:action="@{/change-player/update-drop}" th:object="${user}" method="post">
                 <input hidden type="text" th:field="*{id}">
@@ -86,9 +95,9 @@
                 <button type="submit" class="btn-danger btn-lg">Уменьшить</button>
             </form>
                     </span>
-                    <span th:text="'Капли: ' + ${user.drop}">
+                        <span th:text="'Капли: ' + ${user.drop}">
                     </span>
-                    <span>
+                        <span>
                         <form th:action="@{/change-player/update-drop}" th:object="${user}" method="post">
                             <input hidden type="text" th:field="*{id}">
                             <input hidden id="inputDropPlus" type="text" th:field="*{drop}">
@@ -99,16 +108,80 @@
                             <button type="submit" class="btn-danger btn-lg">Увеличить</button>
                         </form>
                     </span>
-                </div>
-            </td>
-        </tr>
-        <tr th:if="${error!=null}">
-            <th colspan="3" class="alert alert-danger" role="alert" th:text="${error}"></th>
-        </tr>
-        </tbody>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
 
-    </table>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <form style="padding: 30px;"
+                          th:action="@{/change-player/update-character}"
+                          th:object="${user}" method="post">
+                        <input type="text" th:field="*{id}" hidden>
+                        <input type="text" th:field="*{username}" hidden>
+                        <input type="text" th:field="*{password}" hidden>
+                        <input type="text" th:field="*{matchingPassword}" hidden>
+                        <input type="submit" id="save" hidden>
+                        <table style="text-align: center; margin: auto">
+                            <tbody>
+                            <tr>
+                                <td class="fs-5">
+                                    Персонаж выбыл из игры?
+                                </td>
+                                <td style="padding: 5px">
+                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_yes"
+                                           value="true" th:field="*{dead}">
+                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_yes">Да</label>
 
+                                    <input type="radio" class="btn-check" name="dead" id="checkbox_is_died_no"
+                                           value="false" th:field="*{dead}">
+                                    <label class="btn btn-outline-danger btn-sm" for="checkbox_is_died_no">Нет</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fs-3" colspan="2">
+                                    Изменить персонажа
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    <div class="row row-cols-auto justify-content-around " style="margin: auto">
+                                        <div class="col" style="padding: 0"
+                                             th:each="pic: ${allUnoccupiedCharacters}">
+                                            <div class="card backgroundTransparent" style="border: transparent">
+                                                <input class="btn-check" type="radio"
+                                                       th:id="${pic.addressOfSmallPicture}" th:value="${pic.id}"
+                                                       th:field="*{pictureId}">
+                                                <label class="btn-outline-danger" th:for="${pic.addressOfSmallPicture}">
+                                                    <img class="card-img" style="width: 4vw"
+                                                         th:src="@{{img} (img=${pic.addressOfSmallPicture})}"
+                                                         alt="persName" src="#">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </td>
+                <td>
+                    <label class="btn-danger btn-lg" for="save">
+                        <p style="width:15px;word-wrap: break-word;white-space:pre-wrap;">
+                            Сохранить
+                        </p>
+                    </label>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div th:if="${error!=null}" class="alert alert-danger text-center" role="alert" style="margin: 5px 70px;"
+         th:text="${error}"></div>
 </div>
 </body>
 </html>

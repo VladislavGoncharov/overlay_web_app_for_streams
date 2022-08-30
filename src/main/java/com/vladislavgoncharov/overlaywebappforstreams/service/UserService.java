@@ -2,14 +2,13 @@ package com.vladislavgoncharov.overlaywebappforstreams.service;
 
 import com.vladislavgoncharov.overlaywebappforstreams.dto.UserDTO;
 import com.vladislavgoncharov.overlaywebappforstreams.entity.Role;
-import com.vladislavgoncharov.overlaywebappforstreams.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.xml.bind.ValidationException;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-    List<User> findAll();
+    List<UserDTO> findAll();
     List<UserDTO> findAllByRole(Role role);
 
     UserDTO findUserByUsername(String name);

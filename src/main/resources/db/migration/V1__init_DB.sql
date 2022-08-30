@@ -6,12 +6,22 @@ create table show_overlay
     primary key (id)
 );
 
+drop table if exists font_link cascade;
+create table font_link
+(
+    id              bigint not null,
+    font_address     varchar(255),
+    font_name      varchar(255),
+    primary key (id)
+);
+
 drop table if exists character_picture cascade;
 create table character_picture
 (
     id                       bigint not null,
     address_of_big_picture   varchar(255),
     address_of_small_picture varchar(255),
+    is_died          boolean,
     primary key (id)
 );
 
@@ -41,7 +51,7 @@ create table users
     password        varchar(255) not null,
     role            varchar(50),
     rank_id         bigint,
-    drop_id        bigint,
+    drop_id         bigint,
     picture_id      bigint,
     primary key (id)
 );
